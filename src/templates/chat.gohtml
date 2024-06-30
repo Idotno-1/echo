@@ -57,19 +57,32 @@
                 console.log("WebSocket is closed now.");
             };
 
+            const input = document.getElementById('message');
+            input.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // Prevent the default form submission
+                    sendMessage();
+                }
+            });
+
             // Cookie
             const token = getCookie("token");
             cookiePayload = JSON.parse(atob(token.split('.')[1]));
         }
 
         function sendMessage() {
+            const input = document.getElementById('message');
             const username = cookiePayload.username;
-            const content = document.getElementById('message').value;
+            const content = input.value.trim();
+            if (content === '') return;
+
             const message = {
                 username: username,
                 content: content
             };
+
             ws.send(JSON.stringify(message));
+            input.value = '';
         }
 
         function getCookie(name) {
