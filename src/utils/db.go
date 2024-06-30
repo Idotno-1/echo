@@ -11,11 +11,11 @@ import (
 )
 
 func GetDbConnection() *gorm.DB {
-	HOST := GetEnv("ECHO_DB_HOST", "localhost")
-	USER := GetEnv("ECHO_DB_USER", "postgres")
-	PASS := GetEnv("ECHO_DB_PASS", "postgres")
-	NAME := GetEnv("ECHO_DB_NAME", "echo")
-	PORT := GetEnv("ECHO_DB_PORT", "5432")
+	HOST := GetEnv("ECHO_POSTGRES_HOST", "localhost")
+	USER := GetEnv("ECHO_POSTGRES_USER", "postgres")
+	PASS := GetEnv("ECHO_POSTGRES_PASS", "postgres")
+	NAME := GetEnv("ECHO_POSTGRES_NAME", "echo")
+	PORT := GetEnv("ECHO_POSTGRES_PORT", "5432")
 
 	connString := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", HOST, USER, PASS, NAME, PORT)
 	db, err := gorm.Open(postgres.Open(connString), &gorm.Config{})
