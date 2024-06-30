@@ -19,6 +19,7 @@ var channel = make(chan Message)
 type Message struct {
 	Username string `json:"username"`
 	Content  string `json:"content"`
+	Type     string `json:"type"`
 }
 
 func HandleWsConnections(w http.ResponseWriter, r *http.Request) {
@@ -40,6 +41,10 @@ func HandleWsConnections(w http.ResponseWriter, r *http.Request) {
 			log.Printf("Error reading message: %v", err)
 			delete(clients, ws)
 			break
+		}
+
+		if msg.Type == "ping" {
+			continue // Ignore ping messages
 		}
 
 		channel <- msg

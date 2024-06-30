@@ -68,6 +68,11 @@
             // Cookie
             const token = getCookie("token");
             cookiePayload = JSON.parse(atob(token.split('.')[1]));
+
+            // Send a ping message every 30 seconds to keep the connection alive
+            setInterval(function() {
+                ws.send(JSON.stringify({ type: 'ping' }));
+            }, 30000);
         }
 
         function sendMessage() {
@@ -78,7 +83,8 @@
 
             const message = {
                 username: username,
-                content: content
+                content: content,
+                type: "message"
             };
 
             ws.send(JSON.stringify(message));
