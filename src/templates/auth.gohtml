@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Authentication</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = getCookie("token");
+            if (token) {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                document.getElementById('auth-section').innerHTML = `
+                    <div class="container">
+                    <p>You are already logged in, ${payload.username}</p>
+                    <button type="submit" onclick="logout()">Logout</button>
+                    </div>
+                `;
+            }
+        });
+
+        async function registerUser(event) {
+            event.preventDefault();
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            if (response.ok) {
+                alert('User registered successfully!');
+            } else {
+                alert('Failed to register user');
+            }
+        }
+
+        async function loginUser(event) {
+            event.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.cookie = `token=${data.token}; path=/`;
+                window.location.href = '/'; // Redirect to a protected route
+            } else {
+                alert('Failed to log in');
+            }
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        function logout() {
+            document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            window.location.reload();
+        }
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label, input {
+            margin-bottom: 10px;
+        }
+        button[type="submit"] {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="auth-section">
+        <div class="container">
+            <h2>Register</h2>
+                <form onsubmit="registerUser(event)">
+                    <label for="register-username">Username:</label>
+                    <input type="text" id="register-username" name="username" required>
+                    <br>
+                    <label for="register-password">Password:</label>
+                    <input type="password" id="register-password" name="password" required>
+                    <br>
+                    <button type="submit">Register</button>
+                </form>
+        </div>
+        <div class="container">
+            <h2>Login</h2>
+            <form onsubmit="loginUser(event)">
+                <label for="login-username">Username:</label>
+                <input type="text" id="login-username" name="username" required>
+                <br>
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" name="password" required>
+                <br>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

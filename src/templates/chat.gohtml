@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label, input {
+            margin-bottom: 10px;
+        }
+        button[type="submit"] {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        let ws;
+        let cookiePayload;
+
+        function init() {
+            // Websocket
+            ws = new WebSocket("ws://" + window.location.host + "/ws");
+
+            ws.onmessage = function(event) {
+                const messages = document.getElementById('messages');
+                const message = JSON.parse(event.data);
+                const messageElement = document.createElement('li');
+                messageElement.textContent = `${message.username}: ${message.content}`;
+                messages.appendChild(messageElement);
+            };
+
+            ws.onclose = function(event) {
+                console.log("WebSocket is closed now.");
+            };
+
+            // Cookie
+            const token = getCookie("token");
+            cookiePayload = JSON.parse(atob(token.split('.')[1]));
+        }
+
+        function sendMessage() {
+            const username = cookiePayload.username;
+            const content = document.getElementById('message').value;
+            const message = {
+                username: username,
+                content: content
+            };
+            ws.send(JSON.stringify(message));
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    </script>
+</head>
+<body onload="init()">
+    <div class="container">
+        <h1>Chat</h1>
+        <ul id="messages"></ul>
+    </div>
+
+    <div class="container">
+        <h2>Broadcast a message</h2>
+
+        <input type="text" id="message" placeholder="Message">
+
+        <button type="submit" onclick="sendMessage()">Send</button>
+    </div>
+
+</body>
+</html>
