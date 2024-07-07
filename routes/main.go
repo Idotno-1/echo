@@ -16,17 +16,17 @@ func CreateRouter() *chi.Mux {
 
 	// ---- Frontend
 	if utils.GetEnv("ECHO_ENABLE_FRONTEND", "true") == "true" {
-		r.Get("/", RenderTemplate("templates/home.gohtml"))
-		r.Get("/auth", RenderTemplate("templates/auth.gohtml"))
+		r.Get("/", RenderTemplate("web/templates/home.gohtml"))
+		r.Get("/auth", RenderTemplate("web/templates/auth.gohtml"))
 
 		r.Group(func(r chi.Router) {
 			r.Use(utils.JWTAuthMiddleware)
 
 			// ---- Users
-			r.Get("/users", RenderTemplate("templates/users.gohtml"))
+			r.Get("/users", RenderTemplate("web/templates/users.gohtml"))
 
 			// ---- Chat
-			r.Get("/chat", RenderTemplate("templates/chat.gohtml"))
+			r.Get("/chat", RenderTemplate("web/templates/chat.gohtml"))
 		})
 	}
 
