@@ -11,8 +11,7 @@ import (
 	"idotno.fr/echo/models"
 )
 
-// var jwtKey = []byte(GenerateJWTKey())
-var jwtKey = []byte("aaaaaaaaaaa")
+var jwtKey = []byte(GetEnv("ECHO_JWT_KEY", GenerateJWTKey()))
 
 type Claims struct {
 	UserID   uint   `json:"id"`
