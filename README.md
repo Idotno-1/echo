@@ -1,6 +1,6 @@
 # Echo
 
-Simple Chat made in Go.
+A real-time chat application built with Go and the Chi router, featuring user authentication, JWT-based authorization, and WebSocket communication. The app allows users to register, log in, and chat in real-time, with messages broadcast to all connected clients. The project includes both server-side and client-side components, with an HTML interface using Go templates.
 
 ## Run
 

@@ -2,10 +2,10 @@ FROM golang:latest
 
 WORKDIR /srv/echo
 
-COPY src/go.mod src/go.sum ./
+COPY go.mod go.sum ./
 RUN go mod download
 
-COPY src/ .
+COPY . .
 RUN go build -o main .
 
 EXPOSE 8080
